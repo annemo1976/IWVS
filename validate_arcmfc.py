@@ -36,8 +36,17 @@ flatten = lambda l: [item for sublist in l for item in sublist]
 #            metrics=4,
 #            areas=1]
 # ---
-pathstr=('/lustre/storeA/project/fou/om/waveverification/Arc-MFC/monthly/' + now.strftime('%Y') + '_' + now.strftime('%b') + '/')
-filestr='product_quality_stats_ARCTIC_ANALYSIS_FORECAST_WAV_002_006_' + now.strftime('%Y') + now.strftime('%m') + '01-' + now.strftime('%Y') + now.strftime('%m') + str(monthrange(now.year, now.month)[1]) + '.nc'
+pathstr=('/lustre/storeA/project/fou/om/waveverification/Arc-MFC/' 
+        + 'monthly/' 
+        + now.strftime('%Y') 
+        + '_' 
+        + now.strftime('%b') + '/')
+filestr=('product_quality_stats_ARCTIC_ANALYSIS_FORECAST_WAV_002_006_' 
+        + now.strftime('%Y') 
+        + now.strftime('%m') 
+        + '01-' 
+        + now.strftime('%Y') + now.strftime('%m') 
+        + str(monthrange(now.year, now.month)[1]) + '.nc'
 
 # cp original validation file to new file that can be changed
 #filestr_new = pathstr + filestr + ".test"
@@ -64,7 +73,8 @@ excepts_all=[]
 count1 = 0
 
 start_time = time.time()
-sa_obj = sa(start_date,edate=end_date,timewin=timewin,region="ARCMFC",mode="ARCMFC")
+sa_obj = sa(start_date,edate=end_date,timewin=timewin,
+            region="ARCMFC",mode="ARCMFC")
 time1 = time.time() - start_time
 print "Time used for collecting data: ", time1, " seconds" 
 
@@ -144,11 +154,14 @@ nc_stats_VHM0_altimeter = nc.createVariable(
                         'areas',),
                         fill_value=9999.)
 nc_stats_VHM0_altimeter[:] = M
-nc_stats_VHM0_altimeter.standard_name = "sea_surface_wave_significant_height"
+nc_stats_VHM0_altimeter.standard_name = \
+                        "sea_surface_wave_significant_height"
 nc_stats_VHM0_altimeter.parameter = "stats_VHM0_altimeter"
 nc_stats_VHM0_altimeter.units = "m"
-nc_stats_VHM0_altimeter.reference = "wave data from Sentinel-3a altimeter"
-nc_stats_VHM0_altimeter.reference_source = "WAVE_GLO_WAV_L3_SWH_NRT_OBSERVATIONS_014_001"
+nc_stats_VHM0_altimeter.reference = \
+                        "wave data from Sentinel-3a altimeter"
+nc_stats_VHM0_altimeter.reference_source = \
+                        "WAVE_GLO_WAV_L3_SWH_NRT_OBSERVATIONS_014_001"
 nc.close()
 print "Data appended"
 print "### VALIDATION FINISHED ###"
