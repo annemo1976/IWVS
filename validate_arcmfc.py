@@ -9,19 +9,35 @@ from copy import deepcopy
 import numpy as np
 from dateutil.relativedelta import relativedelta
 from calendar import monthrange
-
 from netCDF4 import Dataset
 import matplotlib.pyplot as plt
-
 from utils import grab_PID
 from stationmod import matchtime
 from satmod import get_model2
 import os
+import argparse
+from argparse import RawTextHelpFormatter
 
-if len(sys.argv)==1:
+parser = argparse.ArgumentParser(
+    description="""
+    Main program to run the monthly ARCMFC validation
+    with Sentinel.\n
+    Usage example in unix command line: 
+    ./validate_arcmfc.py -d 201808\n
+    The argument consists of the year and month to be validated
+    If no date is given the last month is validated.
+    """,
+    formatter_class = RawTextHelpFormatter
+    )
+parser.add_argument('-d',help="validation for given month",
+                    type=int)
+args = parser.parse_args()
+#args, rest = parser.parse_known_args()
+
+if len(sys.argv)<=2:
     now = datetime.now()-relativedelta(months=1)
 else:
-    nowstr = str(sys.argv[1])
+    nowstr = str(sys.argv[2])
     now = datetime(int(nowstr[0:4]),int(nowstr[4:6]),1)
 
 # retrieve PID
@@ -46,7 +62,7 @@ filestr=('product_quality_stats_ARCTIC_ANALYSIS_FORECAST_WAV_002_006_'
         + now.strftime('%m') 
         + '01-' 
         + now.strftime('%Y') + now.strftime('%m') 
-        + str(monthrange(now.year, now.month)[1]) + '.nc'
+        + str(monthrange(now.year, now.month)[1]) + '.nc')
 
 # cp original validation file to new file that can be changed
 #filestr_new = pathstr + filestr + ".test"

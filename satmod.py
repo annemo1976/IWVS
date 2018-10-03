@@ -1473,31 +1473,43 @@ def ARCMFCfile(arcmfc_validation_dict):
     nccHs[:] = self.cHs
 
 # --- help ------------------------------------------------------------#
-#if __name__ == '__main__':
-#    parser = argparse.ArgumentParser(
-#        description="""
-#        Module encompassing classes and methods to read and 
-#        process wave field related data from satellites.\n
-#        Usage: 
-#        from satmod import sentinel_altimeter as sa
-#        from datetime import datetime, timedelta
-#        # assume 12h leadtime
-#        init_date = datetime(2018,5,1,0,0,0) - timedelta(hours=12)
-#        fc_date = datetime(2018,5,1,0,0,0) 
-#        # get satellite waves for fc_date
-#        sa_obj = sa(fc_date,timewin=timewin,region="ARCMFC"[,download=True])
-#        # possible to save data for region in netcdf
-#        sa_obj.dumptonc("outpath/")
-#        # possible to have a quick look at the swath
-#        sa_obj.quip("ARCMFC",show=True[,save=True])
-#        # get according model data with time and space constraints
-#        results = sa_obj.get_model('ARCMFC',init_date,fc_date,\
-#                                    timewin=30,distlim=6)
-#        # validate the model
-#        valid_dict = validate(results)
-#        """,
-#        formatter_class = RawTextHelpFormatter
-#        )
-#    parser.add_argument('--conflicting', '-c')
-#    #args = parser.parse_args()
-#    args, rest = parser.parse_known_args()
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        description="""
+        Module encompassing classes and methods to read and 
+        process wave field related data from satellites.\n
+        Usage example in python: 
+        # load modules
+        from satmod import sentinel_altimeter as sa
+        from datetime import datetime, timedelta
+        from satmod import validate\n
+        # assume 12h leadtime
+        init_date = datetime(2018,5,1,0,0,0) - timedelta(hours=12)
+        fc_date = datetime(2018,5,1,0,0,0) 
+        # get satellite waves for fc_date
+        timewin = 30 # units = minutes
+        sa_obj = sa(fc_date,timewin=timewin,
+                    region="ARCMFC"[,download=True])\n
+        # instead you can also use a time period
+        sdate = init_date
+        edate = fc_date
+        # if region is within ARCMFC the argument mode="ARCMFC"
+        # is recommended for quicker execution:
+        sa_obj = sa(sdate,edate=edate,timewin=timewin,
+                    region="ARCMFC",mode="ARCMFC")\n
+        # possible to save data for region in netcdf
+        sa_obj.dumptonc("outpath/")\n
+        # possible to have a quick look at the swath
+        sa_obj.quip("ARCMFC",show=True[,save=True])\n
+        # model/sentinel collocation:
+        # get according model data with time and space constraints
+        results = sa_obj.get_model('ARCMFC',init_date,fc_date,\
+                                    timewin=30,distlim=6)\n
+        # validate the model
+        valid_dict = validate(results)
+        # or with bootstrap
+        valid_dict = validate(results, boot=True)
+        """,
+        formatter_class = RawTextHelpFormatter
+        )
+    args = parser.parse_args()
