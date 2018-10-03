@@ -20,12 +20,12 @@ from argparse import RawTextHelpFormatter
 
 parser = argparse.ArgumentParser(
     description="""
-    Main program to run the monthly ARCMFC validation
-    with Sentinel.\n
-    Usage example in unix command line: 
-    ./validate_arcmfc.py -d 201808\n
-    The argument consists of the year and month to be validated
-    If no date is given the last month is validated.
+Main program to run the monthly ARCMFC validation
+with Sentinel.\n
+Usage example in unix command line: 
+./validate_arcmfc.py -d 201808\n
+The argument consists of the year and month to be validated
+If no date is given the last month is validated.
     """,
     formatter_class = RawTextHelpFormatter
     )

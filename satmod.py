@@ -16,11 +16,6 @@ where the options can be e.g.   -h for help     (existing)
                                 -s for save     (wish list)
                                 -d for download (wish list)
                                 - ...
-
-paths for the data files and outfiles to be stored could be installed
-by creating a file with the given paths in the same folder. The paths
-will then be asked when the program is executed and this file is 
-missing.
 '''
 __version__ = "0.5.0"
 __author__="Patrik Bohlinger, Norwegian Meteorological Institute"
@@ -1402,113 +1397,43 @@ def get_pointsat(sa_obj,station=None,lat=None,lon=None,distlim=None):
                     dists.append(dist)
     return sample, dists
 
-def ARCMFCfile(arcmfc_validation_dict):
-    sdate=self.sdate
-    edate=self.edate
-    filename = ("product_quality_stats_" + 
-                "ARCTIC_ANALYSIS_FORECAST_WAV_002_010_" + 
-                + sdate.strftime("%Y%m%d") 
-                + "_" 
-                + edate.strftime("%Y%m%d")
-                + ".nc")
-    fullpath = outpath + filename
-    os.system('mkdir -p ' + outpath)
-    print ('Create ARCMFC Sentinel validation file: ' + fullpath)
-    nc = netCDF4.Dataset(
-                        fullpath,mode='w',
-                        format='NETCDF4'
-                        )
-    nc.title = 'altimeter significant wave height'
-    nc.contact = "patrikb@met.no" ;
-    nc.product = "Arctic wave model WAM" ;
-    nc.production_centre = "Arctic MFC" ;
-    nc.production_unit = "Norwegian Meteorological Institute" ;
-    nc.creation_date = str(datetime.now()) ;
-    nc.thredds_web_site = ("http://thredds.met.no/thredds" + 
-                          "/myocean/ARC-MFC/mywave-arctic.html")
-    # dimensions
-    rtimerange=len(self.ridx)
-    if only_reg is None:
-        dim_time = nc.createDimension(
-                                'time', 
-                                size=rtimerange
-                                )
-        dim_metrics = nc.createDimension(
-                                'metrics', 
-                                size=4
-                                )
-        dim_areas = nc.createDimension(
-                                'areas', 
-                                size=1
-                                )
-        dim_forecasts = nc.createDimension(
-                                'forecasts', 
-                                size=10
-                                )
-        dim_surface = nc.createDimension(
-                                'surface', 
-                                size=1
-                                )
-
-    # variables
-    if only_reg is None:
-        nc_forecasts = nc.createVariable(
-                                'forecasts',
-                                np.float64, 
-                                dimensions=('forecasts',)
-                                )   
-        nc_stats_VHM0 = nc.createVariable(
-                               'stats_VHM0',
-                               np.float64, 
-                               dimensions=('time',
-                                           'forecasts',
-                                           'surface',
-                                           'area')
-                                )        
-    # generate time for netcdf file
-    basetime=datetime(2000,1,1)
-    ncctime.units = 'days since 2000-01-01 12:00:00'
-    ncctime[:] = self.cTIME
-    nccHs.units = 'm'
-    nccHs[:] = self.cHs
-
 # --- help ------------------------------------------------------------#
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description="""
-        Module encompassing classes and methods to read and 
-        process wave field related data from satellites.\n
-        Usage example in python: 
-        # load modules
-        from satmod import sentinel_altimeter as sa
-        from datetime import datetime, timedelta
-        from satmod import validate\n
-        # assume 12h leadtime
-        init_date = datetime(2018,5,1,0,0,0) - timedelta(hours=12)
-        fc_date = datetime(2018,5,1,0,0,0) 
-        # get satellite waves for fc_date
-        timewin = 30 # units = minutes
-        sa_obj = sa(fc_date,timewin=timewin,
-                    region="ARCMFC"[,download=True])\n
-        # instead you can also use a time period
-        sdate = init_date
-        edate = fc_date
-        # if region is within ARCMFC the argument mode="ARCMFC"
-        # is recommended for quicker execution:
-        sa_obj = sa(sdate,edate=edate,timewin=timewin,
-                    region="ARCMFC",mode="ARCMFC")\n
-        # possible to save data for region in netcdf
-        sa_obj.dumptonc("outpath/")\n
-        # possible to have a quick look at the swath
-        sa_obj.quip("ARCMFC",show=True[,save=True])\n
-        # model/sentinel collocation:
-        # get according model data with time and space constraints
-        results = sa_obj.get_model('ARCMFC',init_date,fc_date,\
-                                    timewin=30,distlim=6)\n
-        # validate the model
-        valid_dict = validate(results)
-        # or with bootstrap
-        valid_dict = validate(results, boot=True)
+Module encompassing classes and methods to read and 
+process wave field related data from satellites.\n
+Usage example in python: 
+# load modules
+from satmod import sentinel_altimeter as sa
+from datetime import datetime, timedelta
+from satmod import validate\n
+# assume 12h leadtime
+init_date = datetime(2018,5,1,0,0,0) - timedelta(hours=12)
+fc_date = datetime(2018,5,1,0,0,0) 
+# get satellite waves for fc_date
+timewin = 30 # units = minutes
+sa_obj = sa(fc_date,timewin=timewin,
+            region="ARCMFC"[,download=True])\n
+# instead you can also use a time period
+sdate = init_date
+edate = fc_date
+# if region is within ARCMFC the argument mode="ARCMFC"
+# is recommended for quicker execution:
+sa_obj = sa(sdate,edate=edate,timewin=timewin,
+            region="ARCMFC",mode="ARCMFC")\n
+# possible to save data for region in netcdf
+sa_obj.dumptonc("outpath/")\n
+# possible to have a quick look at the swath
+sa_obj.quip("ARCMFC",show=True[,save=True])\n
+# model/sentinel collocation:
+# get according model data with time and space constraints
+results = sa_obj.get_model('ARCMFC',init_date,fc_date,\
+                            timewin=30,distlim=6)\n
+# validate the model
+valid_dict = validate(results)
+# or with bootstrap
+valid_dict = validate(results, boot=True)
         """,
         formatter_class = RawTextHelpFormatter
         )

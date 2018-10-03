@@ -6,18 +6,6 @@ This module encompasses classes and methods to read and process wave
 field related data from stations. I try to mostly follow the PEP 
 convention for python code style. Constructive comments on style and 
 effecient programming are most welcome!
-Future plans involve expanding the help function and adding 
-functionalities such that the program can be executed in the shell
-directly by only writing e.g. program [-option] [sdate] [edate]
-where the options can be e.g.   -h for help
-                                -p for plot
-                                -s for save
-                                -d for download
-                                - ...
-paths for the data files and outfiles to be stored could be installed
-by creating a file with the given paths in the same folder. The paths
-will then be asked when the program is executed and this file is 
-missing.
 '''
 __version__ = "0.5.0"
 __author__="Patrik Bohlinger, Norwegian Meteorological Institute"
@@ -81,20 +69,6 @@ from d22_var_dicts import dat,  WM1, WM2, WM3, \
                                 WIA, WIB, WIC
 from datetime import datetime
 import scipy as sp
-# ---------------------------------------------------------------------#
-
-#parser = argparse.ArgumentParser(
-#        description="""
-#        Module encompassing classes and methods to read and 
-#        process wave field related data from stations.\n
-#        Usage: 
-#        from satmod import station_class as sc
-#        from datetime import datetime
-#        sc_obj=sc(datetime(2018,3,22,6,0,0))
-#        """,
-#        formatter_class = RawTextHelpFormatter
-#        )
-#args = parser.parse_args()
 
 # --- global functions ------------------------------------------------#
 
@@ -401,3 +375,18 @@ def dumptonc(time,model,obs,outpath,filename):
     ncobsHs.units = 'm'
     ncobsHs[:] = obs
     nc.close()
+
+# --- help ------------------------------------------------------------#
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        description="""
+This module encompasses classes and methods to read and process wave
+field related data from stations.\n
+Usage:
+from stationmod import station_class as sc
+from datetime import datetime, timedelta
+sc_obj = sc('ekofiskL',sdate,edate)
+        """,
+        formatter_class = RawTextHelpFormatter
+        )
+    args = parser.parse_args()

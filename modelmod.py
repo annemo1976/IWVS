@@ -7,20 +7,7 @@ field from model output. I try to mostly follow the PEP convention for
 python code style. Constructive comments on style and effecient 
 programming are most welcome!
 
-Future plans involve expanding the help function and adding 
-functionalities such that the program can be executed in the shell
-directly by only writing e.g. 
-./modelmod.py [-option] [sdate] [edate] [model]
-where the options can be e.g.   -h for help     (existing)
-                                -p for plot     (wish list)
-                                -s for save     (wish list)
-                                -d for download (wish list)
-                                - ...
-
-paths for the data files and outfiles to be stored could be installed
-by creating a file with the given paths in the same folder. The paths
-will then be asked when the program is executed and this file is 
-missing.
+Currently only mode for continuous model runs, forecast mode is missing
 '''
 __version__ = "0.5.0"
 __author__="Patrik Bohlinger, Norwegian Meteorological Institute"

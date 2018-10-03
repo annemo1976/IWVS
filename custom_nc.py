@@ -7,20 +7,12 @@ files from model, station, or sentinel output. I try to mostly follow
 the PEP convention for python code style. Constructive comments on style 
 and effecient programming are most welcome!
 
-Future plans involve expanding the help function and adding 
-functionalities such that the program can be executed in the shell
-directly by only writing e.g. 
-./custom_nc.py [-option] [sdate] [edate] [model]
-where the options can be e.g.   -h for help     (existing)
-                                -p for plot     (wish list)
-                                -s for save     (wish list)
-                                -d for download (wish list)
-                                - ...
-
-paths for the data files and outfiles to be stored could be installed
-by creating a file with the given paths in the same folder. The paths
-will then be asked when the program is executed and this file is 
-missing.
+I wish it to work something like this in future:
+ 1: get_model for given time period
+ 2: dumptonc based on model (e.g. MWAM4, ARCMFC, ARCMFCnew)
+ 3: choose create or append based on the existence of the file
+    Must have one unlimited dimension (time), and two spatial dimensions
+    (latitude, longitude, which depend on rlat,rlon)
 '''
 __version__ = "0.5.0"
 __author__="Patrik Bohlinger, Norwegian Meteorological Institute"
@@ -64,19 +56,11 @@ import time
 # get necessary paths for module
 import pathfinder
 
-# module to dump sentinel_class object into nc-file
-# should also treat other similar type data
-
-# 1: get_model for given time period
-# 2: dumptonc based on model (e.g. MWAM4, ARCMFC, ARCMFCnew)
-# 3: choose create or append based on the existence of the file
-# Must have one unlimited dimension (time), and two spatial dimensions
-#   (latitude, longitude, which depend on rlat,rlon)
-
 # --- global functions ------------------------------------------------#
 """
 definition of some global functions
 """
+# Currently None
 # ---------------------------------------------------------------------#
 
 
