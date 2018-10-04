@@ -321,17 +321,15 @@ def get_model(model,fc_date,init_date=None,leadtime=None):
             filestr = (init_date.strftime(model_dict[model]['path_template'])
                 + init_date.strftime(model_dict[model]['file_template']))
         else:
-            #leadtime = ((fc_date - init_date).days * 24 
-            #            + (fc_date - init_date).seconds/60./60.)
-            tmpdate = fc_date - timedelta(hours=leadtime)
-            filedate = datetime(tmpdate.year,
-                                tmpdate.month,
-                                tmpdate.day,
-                                (tmpdate.hour/6)*6)
-            filestr = (filedate.strftime(model_dict[model]['path_template'])
-                + filedate.strftime(model_dict[model]['file_template']))
-            #filestr = (init_date.strftime(model_dict[model]['path_template'])
-            #    + init_date.strftime(model_dict[model]['file_template']))
+            if leadtime%6!=0:
+                print ("leadtime needs to be multiple of 6h")
+                print ("exit loop ...")
+                #sys.exit()
+            else:
+                tmpdate = fc_date - timedelta(hours=leadtime)
+                filedate = tmpdate
+                filestr = (filedate.strftime(model_dict[model]['path_template'])
+                    + filedate.strftime(model_dict[model]['file_template']))
             del tmpdate
     print (filestr)
     f = netCDF4.Dataset(filestr,'r')
