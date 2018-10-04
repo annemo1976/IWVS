@@ -6,16 +6,24 @@ from datetime import datetime, timedelta
 from math import radians, cos, sin, asin, sqrt
 import sys
 
-def identify_outliers(time,ts,ts_ref=None):
-    # time -> time series to check neighbour values
-    # ts -> time series to be checked for outliers
-    # ts_ref -> time series to compare to (optional)
+def identify_outliers(time,ts,ts_ref=None,hs_ll=None,hs_ul=None):
+    """
+    time -> time series to check neighbour values
+    ts -> time series to be checked for outliers
+    ts_ref -> time series to compare to (optional)
+    hs_ll -> hs lower limit over which values are checked
+    hs_ul -> values over limit are being rejected
+    """
+    if hs_ll is None:
+        hs_ll = 1
+    if hs_ul is None:
+        hs_ll = 30
     std_ts = np.nanstd(ts)
     mean_ts = np.nanmean(ts)
+    # forward check
     idx_a = []
-    # Hs lower limit 
-    hs_ll= 1.
     for i in range(1,len(ts)):
+        # transform to z
         if len(ts)<25:
             z = (ts[i] - np.nanmean(ts[:]))/np.nanstd(ts[:])
         elif i<13:
@@ -27,12 +35,16 @@ def identify_outliers(time,ts,ts_ref=None):
                 /np.nanstd(ts[(len(ts-1)-25):-1]))
         #if (time[i]-time[i-1]).total_seconds()<2:
         if (time[i]-time[i-1])<2:
+            #reject if value triples compared to neighbor
+            # reject if greater than twice std (>2z)
             if ( ts[i] > hs_ll and ((ts[i-1] >= 3. * ts[i]) or (z>2)) ):
                 idx_a.append(i)
         elif (ts[i] > 1. and z>2):
             idx_a.append(i)
+    # backward check
     idx_b = []
     for i in range(0,len(ts)-1):
+        # transform to z
         if len(ts)<25:
             z = (ts[i] - np.nanmean(ts[:]))/np.nanstd(ts[:])
         elif i<13:
@@ -44,17 +56,23 @@ def identify_outliers(time,ts,ts_ref=None):
                 /np.nanstd(ts[(len(ts-1)-25):-1]))
         #if (time[i+1]-time[i]).total_seconds()<2:
         if (time[i+1]-time[i])<2:
+            #reject if value triples compared to neighbor
+            # reject if greater than twice std (>2z)
             if ( ts[i] > hs_ll and ((ts[i+1] <= 1/3. * ts[i]) or (z>2)) ):
                 idx_b.append(i)
         elif (ts[i] > 1. and z>2):
             idx_b.append(i)
     idx_c = []
     for i in range(len(ts)):
-        if ts[i]>30:
+        # reject if hs>hs_ul
+        if ts[i]>hs_ul:
             idx_c.append(i)
     idx = np.unique(np.array(idx_a + idx_b + idx_c))
     if len(idx)>0:
-        print(str(len(idx)) + ' outliers detected of ' + str(len(time)) + ' values')
+        print(str(len(idx)) 
+                + ' outliers detected of ' 
+                + str(len(time)) 
+                + ' values')
         return idx
     else:
         print('no outliers detected')
