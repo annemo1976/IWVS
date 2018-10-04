@@ -1174,7 +1174,7 @@ def get_model2(sa_obj,model,init_date,fc_date,timewin=None,distlim=None,
         filestr = (model_dict[model]['path']
               + expname
               + init_date.strftime(model_dict[model]['file_template']))
-    elif model == 'mwam4':
+    elif (model == 'mwam4' or model == 'mwam8'):
         filestr = (init_date.strftime(model_dict[model]['path_template'])
               + init_date.strftime(model_dict[model]['file_template']))
     print (filestr)

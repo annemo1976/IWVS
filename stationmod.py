@@ -316,7 +316,7 @@ def get_model(model,fc_date,init_date=None,leadtime=None):
         filestr = (model_dict[model]['path']
           + fc_date.strftime('%Y%m%d')
           + init_date.strftime(model_dict[model]['file_template']))
-    elif model == 'mwam4':
+    elif (model == 'mwam4' or model=='mwam8'):
         if fc_date == init_date:
             filestr = (init_date.strftime(model_dict[model]['path_template'])
                 + init_date.strftime(model_dict[model]['file_template']))

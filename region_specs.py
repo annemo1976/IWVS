@@ -23,9 +23,13 @@ regions_dict = {"Global":           {
                 "mwam4":         {
                                     "llcrnrlon":-32.,
                                     "llcrnrlat":42,
-                                    #"urcrnrlon":13.5,
                                     "urcrnrlon":94,
-                                    #"urcrnrlat":68},
+                                    "urcrnrlat":84
+                                    },
+                "mwam8":         {
+                                    "llcrnrlon":-220.,
+                                    "llcrnrlat":36,
+                                    "urcrnrlon":140,
                                     "urcrnrlat":84
                                     }
                 }

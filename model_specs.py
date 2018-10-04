@@ -52,7 +52,7 @@ model_dict={'ARCMFC':
             'delta_t':'0000-00-00 (01:00:00)'
             },
         'mwam8':
-            {'Hs':'hs',
+            {'Hs':'VHM0',
             'lons':'longitude',
             'lats':'latitude',
             'rotlons':'rlon',
