@@ -124,7 +124,7 @@ class station_class():
             time = []
             timedt = []
             while (tmpdate <= edate):
-                filepath = self.stationpath_lustre_hi + statname + \
+                filepath = stationpath_lustre_hi + statname + \
                     tmpdate.strftime('_%Y%m') + '.nc'
                 nc = netCDF4.Dataset(filepath,'r')
                 #ncg = nc.groups['OBS_d22']
@@ -297,22 +297,42 @@ def get_loc_idx(init_lats,init_lons,target_lat,target_lon,mask=None):
     idx,idy = np.where(distM==np.nanmin(distM))
     return idx, idy, distM, init_lats[idx,idy], init_lons[idx,idy]
 
-def get_model(model,init_date,fc_date):
+#def get_model(model,init_date,fc_date:
+def get_model(model,fc_date,init_date=None,leadtime=None):
     """ 
     fct to get model data
+    if model ARCMFC you need fc_date, init_date
+    if model mwam4 you need fc_date, leadtime
     """
     from misc import haversine
     from model_specs import model_dict
     print ("Get model data according to selected date ....")
-    print ("init_date:",init_date)
+    if init_date is None:
+        print ("leadtime:",leadtime,"h")
+    else:
+        print ("init_date:",init_date)
     print ("fc_date:",fc_date)
     if model == 'ARCMFC':
         filestr = (model_dict[model]['path']
           + fc_date.strftime('%Y%m%d')
           + init_date.strftime(model_dict[model]['file_template']))
     elif model == 'mwam4':
-        filestr = (init_date.strftime(model_dict[model]['path_template'])
-          + init_date.strftime(model_dict[model]['file_template']))
+        if fc_date == init_date:
+            filestr = (init_date.strftime(model_dict[model]['path_template'])
+                + init_date.strftime(model_dict[model]['file_template']))
+        else:
+            #leadtime = ((fc_date - init_date).days * 24 
+            #            + (fc_date - init_date).seconds/60./60.)
+            tmpdate = fc_date - timedelta(hours=leadtime)
+            filedate = datetime(tmpdate.year,
+                                tmpdate.month,
+                                tmpdate.day,
+                                (tmpdate.hour/6)*6)
+            filestr = (filedate.strftime(model_dict[model]['path_template'])
+                + filedate.strftime(model_dict[model]['file_template']))
+            #filestr = (init_date.strftime(model_dict[model]['path_template'])
+            #    + init_date.strftime(model_dict[model]['file_template']))
+            del tmpdate
     print (filestr)
     f = netCDF4.Dataset(filestr,'r')
     model_lons = f.variables[model_dict[model]['lons']][:]
@@ -328,6 +348,7 @@ def get_model(model,init_date,fc_date):
                     + timedelta(seconds=element))
     model_time_dt_valid = [model_time_dt[model_time_dt.index(fc_date)]]
     model_hs_valid = model_Hs[model_time_dt.index(fc_date),:,:]
+    #return model_time_dt, model_hs_valid, model_lons, model_lats
     return model_time_dt, model_hs_valid, model_lons, model_lats
 
 def dumptonc(time,model,obs,outpath,filename):
