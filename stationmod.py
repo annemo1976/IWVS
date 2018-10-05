@@ -346,7 +346,6 @@ def get_model(model,fc_date,init_date=None,leadtime=None):
                     + timedelta(seconds=element))
     model_time_dt_valid = [model_time_dt[model_time_dt.index(fc_date)]]
     model_hs_valid = model_Hs[model_time_dt.index(fc_date),:,:]
-    #return model_time_dt, model_hs_valid, model_lons, model_lats
     return model_time_dt, model_hs_valid, model_lons, model_lats
 
 def dumptonc(time,model,obs,outpath,filename):
