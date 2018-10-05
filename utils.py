@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from math import radians, cos, sin, asin, sqrt
 import sys
 
-def identify_outliers(time,ts,ts_ref=None,hs_ll=None,hs_ul=None):
+def identify_outliers(time,ts,ts_ref=None,hs_ll=None,hs_ul=None,dt=None):
     """
     time -> time series to check neighbour values
     ts -> time series to be checked for outliers
