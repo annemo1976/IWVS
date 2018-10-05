@@ -16,8 +16,8 @@ now=dt.now()
 # use two days to create some redundancy
 sdate = dt(now.year,now.month,now.day)-timedelta(days=2)
 edate = dt(now.year,now.month,now.day)
-#sdate = dt(2018,6,30)
-#edate = dt(2018,7,12)
+#sdate = dt(2018,8,31)
+#edate = dt(2018,10,1)
 
 
 start_time = time.time()
