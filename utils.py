@@ -15,9 +15,9 @@ def identify_outliers(time,ts,ts_ref=None,hs_ll=None,hs_ul=None,dt=None):
     hs_ul -> values over limit are being rejected
     """
     if hs_ll is None:
-        hs_ll = 1
+        hs_ll = 1.
     if hs_ul is None:
-        hs_ll = 30
+        hs_ul = 30.
     std_ts = np.nanstd(ts)
     mean_ts = np.nanmean(ts)
     # forward check
@@ -33,14 +33,18 @@ def identify_outliers(time,ts,ts_ref=None,hs_ll=None,hs_ul=None,dt=None):
         elif i>len(ts)-12:
             z = ((ts[i] - np.nanmean(ts[(len(ts-1)-25):-1]))
                 /np.nanstd(ts[(len(ts-1)-25):-1]))
-        #if (time[i]-time[i-1]).total_seconds()<2:
-        if (time[i]-time[i-1])<2:
+        if dt == True:
+            delta_t = (time[i]-time[i-1]).total_seconds()
+        else:
+            delta_t = time[i]-time[i-1]
+        if delta_t<2:
             #reject if value triples compared to neighbor
             # reject if greater than twice std (>2z)
             if ( ts[i] > hs_ll and ((ts[i-1] >= 3. * ts[i]) or (z>2)) ):
                 idx_a.append(i)
-        elif (ts[i] > 1. and z>2):
+        elif (ts[i] > hs_ll and z>2):
             idx_a.append(i)
+    print len(idx_a)
     # backward check
     idx_b = []
     for i in range(0,len(ts)-1):
@@ -54,18 +58,23 @@ def identify_outliers(time,ts,ts_ref=None,hs_ll=None,hs_ul=None,dt=None):
         elif i>len(ts)-12:
             z = ((ts[i] - np.nanmean(ts[(len(ts-1)-25):-1]))
                 /np.nanstd(ts[(len(ts-1)-25):-1]))
-        #if (time[i+1]-time[i]).total_seconds()<2:
-        if (time[i+1]-time[i])<2:
+        if dt == True:
+            delta_t = (time[i+1]-time[i]).total_seconds()
+        else:
+            delta_t = time[i+1]-time[i]
+        if delta_t<2:
             #reject if value triples compared to neighbor
             # reject if greater than twice std (>2z)
             if ( ts[i] > hs_ll and ((ts[i+1] <= 1/3. * ts[i]) or (z>2)) ):
                 idx_b.append(i)
-        elif (ts[i] > 1. and z>2):
+        elif (ts[i] > hs_ll and z>2):
             idx_b.append(i)
+    print len(idx_b)
     idx_c = []
     for i in range(len(ts)):
         # reject if hs>hs_ul
         if ts[i]>hs_ul:
+            print "here1"
             idx_c.append(i)
     idx = np.unique(np.array(idx_a + idx_b + idx_c))
     if len(idx)>0:
