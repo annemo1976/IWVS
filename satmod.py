@@ -526,9 +526,9 @@ class sentinel_altimeter():
             idx_start,tmp = check_date(pathlst,sdate-timedelta(minutes=timewin))
             tmp,idx_end = check_date(pathlst,edate+timedelta(minutes=timewin))
             del tmp
-            pathlst = pathlst[idx_start:idx_end+1]
-            filelst = filelst[idx_start:idx_end+1]
-            print (str(int(len(pathlst))) + " files processed")
+            pathlst = np.unique(pathlst[idx_start:idx_end+1])
+            filelst = np.unique(filelst[idx_start:idx_end+1])
+            print (str(int(len(pathlst))) + " valid files found")
         return pathlst,filelst
 
     def read_localfiles(self,pathlst,mode):
@@ -543,6 +543,7 @@ class sentinel_altimeter():
         TIME = []
         MAXS = []
         count = 0
+        print ("Processing " + str(int(len(pathlst))) + " files")
         print (pathlst[0])
         print (pathlst[-1])
         for element in pathlst:
@@ -699,7 +700,7 @@ class sentinel_altimeter():
         listofdatetimes_sec=self.rTIME
         sdate=listofdatetimes[0]
         edate=listofdatetimes[-1]
-        trange=int(math.ceil((edate-sdate).total_seconds()/60/60/24))
+        trange=int(math.ceil((edate-sdate).total_seconds()/60./60./24.))
         freqlst=[]
         datelst=[]
         dincr=0
@@ -728,11 +729,9 @@ class sentinel_altimeter():
         anomalies connected to Moskstraumen
         '''
 
-    def plotavail(self,btr_dates,btr_freq):
+    def plotavail(self,btr_dates,btr_freq,show=None,save=None):
         '''
-        Create diagnostic figures tailored to chosen region.
-        To come in future!
-        btr = bintime result
+        btr_ = bintime result
         '''
         # ignore irrelevant warnings from matplotlib for stdout
         import warnings
@@ -758,7 +757,8 @@ class sentinel_altimeter():
         ax.set_ylabel('occurrence frequency')
         # rotate and align the tick labels so they look better
         fig.autofmt_xdate()
-        plt.savefig(
+        if save == True:
+            plt.savefig(
                     'altimeter_occfreq_'
                     + self.region
                     + "_" 
@@ -768,8 +768,8 @@ class sentinel_altimeter():
                     + '.pdf', 
                     format='pdf'
                     )
-        plt.show()
-        #plt.plot()
+        if show == True:
+            plt.show()
 
     def quipdiag(self):
         '''
