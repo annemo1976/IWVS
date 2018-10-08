@@ -4,19 +4,20 @@
 from datetime import datetime, timedelta
 from satmod import sentinel_altimeter as sa
 import argparse
+import os
 
 # parser
 parser = argparse.ArgumentParser(
     description="""
 Check Sentinel-3a data. Example:
-./check_S3a.py -r ARCMFC -sd 2018080112 -ed 2018080718 -m -a --show --save
+./check_S3a.py -r ARCMFC -sd 2018080112 -ed 2018080718 -m -a --show -save ./outpath
     """
     )
-parser.add_argument("-r",
+parser.add_argument("-r", metavar='region',
     help="region to check")
-parser.add_argument("-sd",
+parser.add_argument("-sd", metavar='startdate',
     help="start date of time period to check")
-parser.add_argument("-ed",
+parser.add_argument("-ed", metavar='enddate',
     help="end date of time period to check")
 parser.add_argument("-m",
     help="make map",action='store_const',const=True)
@@ -24,11 +25,11 @@ parser.add_argument("-a",
     help="compute availability",action='store_const',const=True)
 parser.add_argument("--show",
     help="show figure",action='store_const',const=True)
-parser.add_argument("--save",
-    help="save figure(s)",action='store_const',const=None)
+parser.add_argument("-save",metavar='outpath',
+    help="save figure(s)")
 
 args = parser.parse_args()
-print ("arguments entered are: ",args)
+print ("Parsed arguments: ",args)
 
 # setup
 sdate = datetime(int(args.sd[0:4]),int(args.sd[4:6]),
@@ -52,3 +53,6 @@ if bool(args.m)==True:
 if bool(args.a)==True:
     freqlst,datelst=sa_obj.bintime()
     sa_obj.plotavail(datelst,freqlst,show=bool(args.show),save=bool(args.save))
+if args.save is not None:
+    os.system('mkdir -p ' + args.save)
+    os.system('mv altimeter*.pdf ' + args.save)
