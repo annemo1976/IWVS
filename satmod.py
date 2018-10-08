@@ -676,7 +676,7 @@ class sentinel_altimeter():
                     + str(self.edate),
                     fontsize=10
                     )
-        if save is not None:
+        if save == True:
             plt.savefig(
                         'altimeter_' 
                         + region 
@@ -687,7 +687,7 @@ class sentinel_altimeter():
                         + '.pdf', 
                         format='pdf'
                         )
-        if show is not None:
+        if show == True:
             plt.show()
 
     def bintime(self,binframe=None):
