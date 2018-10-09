@@ -624,7 +624,7 @@ class sentinel_altimeter():
                     labels=[False,False,False,True]
                     )
         elif (region=='Moskenes' or region=='Sulafj' or 
-            region=='mwam4' or region=='mwam8'):   
+            region=='mwam4' or region=='mwam8' or region=='man'):   
             # Lambert Conformal Projection over Moskenes
             m = Basemap(
                 llcrnrlon=self.regions_dict[region]["llcrnrlon"],
@@ -643,7 +643,7 @@ class sentinel_altimeter():
                     np.arange(-180.,181.,1.),
                     labels=[False,False,False,True]
                     )
-            elif (region=='mwam4' or region=='mwam8'):
+            elif (region=='mwam4' or region=='mwam8' or region=='man'):
                 m.drawparallels(
                     np.arange(40.,81.,5.),
                     labels=[True,False,False,False]
@@ -676,7 +676,7 @@ class sentinel_altimeter():
         m = self.quim(region)
         x, y = m(loc[1],loc[0])
         sizedict = {'Global':10,'ARCMFC':10,'Moskenes':20,'Sulafj':20,
-                    'mwam4':20,'mwam8':20}
+                    'mwam4':20,'mwam8':20,'man':20}
         sc=m.scatter(
                     x,y,sizedict[region],c=Hs,marker='o',linewidth='.0',
                     cmap=cmap, vmin=0, vmax=np.nanmax(Hs)

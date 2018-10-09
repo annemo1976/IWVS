@@ -11,6 +11,7 @@ regions_dict = {"Global":           {
                                     },
                 "ARCMFC":          {
                                     "boundinglat":50,
+                                    },
                 "Arctic":          {
                                     "boundinglat":66,
                                     },
@@ -22,19 +23,25 @@ regions_dict = {"Global":           {
                                     #"urcrnrlat":68},
                                     "urcrnrlat":68.5
                                     },
-                "Sulafj":         {
+                "Sulafj":           {
                                     "llcrnrlon":5.,
                                     "llcrnrlat":62.,
                                     "urcrnrlon":8.14,
                                     "urcrnrlat":63.15
                                     },
-                "mwam4":         {
+                "mwam4":            {
                                     "llcrnrlon":-32.,
                                     "llcrnrlat":42,
                                     "urcrnrlon":94,
                                     "urcrnrlat":84
                                     },
-                "mwam8":         {
+                "mwam8":            { # problem with plotting
+                                    "llcrnrlon":-220.,
+                                    "llcrnrlat":36,
+                                    "urcrnrlon":140,
+                                    "urcrnrlat":84
+                                    },
+                "man":              { # problem with plotting
                                     "llcrnrlon":-220.,
                                     "llcrnrlat":36,
                                     "urcrnrlon":140,
