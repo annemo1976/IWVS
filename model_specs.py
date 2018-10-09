@@ -73,8 +73,6 @@ model_dict={'ARCMFC':
             {'Hs':'VHM0',
             'lons':'longitude',
             'lats':'latitude',
-            'rotlons':'rlon',
-            'rotlats':'rlat',
             'time': 'time',
             'path_template':('/lustre/storeB/project/fou/om/SWAN/' 
                             + 'Sula/Nowind/OUTER/'),
@@ -86,9 +84,7 @@ model_dict={'ARCMFC':
             'delta_t':'0000-00-00 (01:00:00)'
             },
         'currEX': # inclomplete
-            {'Hs':'VHM0',
-            'lons':'longitude',
-            'lats':'latitude',
+            {'Hs':'hs',
             'rotlons':'rlon',
             'rotlats':'rlat',
             'time': 'time',
