@@ -68,5 +68,21 @@ model_dict={'ARCMFC':
             'basetime':datetime(1970,1,1),
             'units_time':'seconds since 1970-01-01 00:00:00',
             'delta_t':'0000-00-00 (01:00:00)'
+            },
+        'swanKC':
+            {'Hs':'VHM0',
+            'lons':'longitude',
+            'lats':'latitude',
+            'rotlons':'rlon',
+            'rotlats':'rlat',
+            'time': 'time',
+            'path_template':('/lustre/storeB/project/fou/om/SWAN/' 
+                            + 'Sula/Nowind/OUTER/'),
+            'path':('/lustre/storeB/project/fou/om/SWAN/' 
+                            + 'Sula/Nowind/OUTER/'),
+            'file_template':'swan_0wind%Y/%m/%d/.nc',
+            'basetime':datetime(1970,1,1),
+            'units_time':'seconds since 1970-01-01 00:00:00',
+            'delta_t':'0000-00-00 (01:00:00)'
             }
         }

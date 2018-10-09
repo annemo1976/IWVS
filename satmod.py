@@ -623,7 +623,8 @@ class sentinel_altimeter():
                     np.arange(-180.,181.,10.),
                     labels=[False,False,False,True]
                     )
-        elif region=='Moskenes':   
+        elif (region=='Moskenes' or region=='Sulafj' or 
+            region=='mwam4' or region=='mwam8'):   
             # Lambert Conformal Projection over Moskenes
             m = Basemap(
                 llcrnrlon=self.regions_dict[region]["llcrnrlon"],
@@ -633,12 +634,22 @@ class sentinel_altimeter():
                 projection='lcc', resolution='f',area_thresh=1,
                 lat_1=67.2,lat_2=68,lat_0=67.6,lon_0=12.5
                 )
-            m.drawparallels(
+            if (region=='Moskenes' or region=='Sulafj'):
+                m.drawparallels(
                     np.arange(40.,81.,1.),
                     labels=[True,False,False,False]
                     )
-            m.drawmeridians(
+                m.drawmeridians(
                     np.arange(-180.,181.,1.),
+                    labels=[False,False,False,True]
+                    )
+            elif (region=='mwam4' or region=='mwam8'):
+                m.drawparallels(
+                    np.arange(40.,81.,5.),
+                    labels=[True,False,False,False]
+                    )
+                m.drawmeridians(
+                    np.arange(-180.,181.,5.),
                     labels=[False,False,False,True]
                     )
         m.drawcoastlines()
@@ -664,7 +675,8 @@ class sentinel_altimeter():
         ax = fig.add_subplot(1,1,1)
         m = self.quim(region)
         x, y = m(loc[1],loc[0])
-        sizedict = {'Global':10,'ARCMFC':10,'Moskenes':10}
+        sizedict = {'Global':10,'ARCMFC':10,'Moskenes':20,'Sulafj':20,
+                    'mwam4':20,'mwam8':20}
         sc=m.scatter(
                     x,y,sizedict[region],c=Hs,marker='o',linewidth='.0',
                     cmap=cmap, vmin=0, vmax=np.nanmax(Hs)
@@ -837,6 +849,13 @@ class sentinel_altimeter():
         return ctime, cidx, timelst
 
     def matchregion(self,LATS,LONS,region=None):
+        if ~isinstance(region,basestring)==True:
+            print ("Manuall specified region " 
+                + [llcrnrlat,urcrnrlat,llcrnrlon,urcrnrlon] + ": \n" 
+                + " --> Bounds: " + str(region))
+        else:
+            print ("Specified region: " + region + "\n" 
+              + " --> Bounds: " + str(self.regions_dict[region]))   
         if region is None:
             region = "Global"
             latlst = LATS
@@ -845,6 +864,19 @@ class sentinel_altimeter():
             rlonlst= LONS
             ridx = range(len(LATS))
         else:
+            if isinstance(region,basestring)==True:
+                if (region=='ARCMFC' or region=='Arctic'):
+                    boundinglat = self.regions_dict[region]["boundinglat"]
+                else:
+                    llcrnrlat = self.regions_dict[region]["llcrnrlat"]
+                    urcrnrlat = self.regions_dict[region]["urcrnrlat"]
+                    llcrnrlon = self.regions_dict[region]["llcrnrlon"]
+                    urcrnrlon = self.regions_dict[region]["urcrnrlon"]
+            else:
+                llcrnrlat = region[0]     
+                urcrnrlat = region[1]
+                llcrnrlon = region[2]
+                urcrnrlon = region[3]
             # check if coords in region
             latlst=[]
             lonlst=[]
@@ -856,24 +888,21 @@ class sentinel_altimeter():
                 lonlst.append(LONS[i])
                 if (
                 (region=='ARCMFC' or region=='Arctic')
-                and LATS[i] >= self.regions_dict[region]["boundinglat"]
+                and LATS[i] >= boundinglat
                     ):
                     rlatlst.append(LATS[i])
                     rlonlst.append(LONS[i])
                     ridx.append(i)
                 elif(
                 region != 'ARCMFC' and region != 'Arctic'
-                and LATS[i] >= self.regions_dict[region]["llcrnrlat"]
-                and LATS[i] <= self.regions_dict[region]["urcrnrlat"]
-                and LONS[i] >= self.regions_dict[region]["llcrnrlon"]
-                and LONS[i] <= self.regions_dict[region]["urcrnrlon"]
+                and LATS[i] >= llcrnrlat
+                and LATS[i] <= urcrnrlat
+                and LONS[i] >= llcrnrlon
+                and LONS[i] <= urcrnrlon
                     ):
                     rlatlst.append(LATS[i])
                     rlonlst.append(LONS[i])
                     ridx.append(i)
-        # choose within a region
-        print ("Specified region: " + region + "\n" 
-              + " --> Bounds: " + str(self.regions_dict[region]))
         if not ridx:
             print ("No values for chosen region and time frame!!!")
         else:

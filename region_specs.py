@@ -11,6 +11,8 @@ regions_dict = {"Global":           {
                                     },
                 "ARCMFC":          {
                                     "boundinglat":50,
+                "Arctic":          {
+                                    "boundinglat":66,
                                     },
                 "Moskenes":         {
                                     "llcrnrlon":12.,
@@ -19,6 +21,12 @@ regions_dict = {"Global":           {
                                     "urcrnrlon":14,
                                     #"urcrnrlat":68},
                                     "urcrnrlat":68.5
+                                    },
+                "Sulafj":         {
+                                    "llcrnrlon":5.,
+                                    "llcrnrlat":62.,
+                                    "urcrnrlon":8.14,
+                                    "urcrnrlat":63.15
                                     },
                 "mwam4":         {
                                     "llcrnrlon":-32.,
