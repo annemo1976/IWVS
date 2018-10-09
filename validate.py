@@ -9,14 +9,20 @@ from utils import identify_outliers
 import os
 import argparse
 from argparse import RawTextHelpFormatter
+import sys
 
 # parser
 parser = argparse.ArgumentParser(
     description="""
 Validate a wave model (mwam4, mwam8, ARCMFC) against observations 
-(platform, satellite, buoys). Example:
-./validate.py -m ARCMFC -fc 2018080218 -sat s3a
-./validate.py -m mwam4 -fc 2018080218 -lt 6 -sat s3a
+(platform, satellite, buoys). Examples:
+./validate.py -m ARCMFC -fc 2018080200 -sat s3a # files 24h init steps
+./validate.py -m ARCMFC -fc 2018080218 -sat s3a # files 24h init steps
+./validate.py -m mwam8 -fc 2018080218 -sat s3a # files 12h init steps
+./validate.py -m mwam4 -fc 2018080218 -sat s3a # files 6h init steps
+# Problems with leadtime e.g.:
+./validate.py -m mwam8 -fc 2018080218 -lt 12 -sat s3a # 12h
+./validate.py -m mwam4 -fc 2018080218 -lt 6 -sat s3a #  6h
     """,
     formatter_class = RawTextHelpFormatter
     )
@@ -26,6 +32,10 @@ parser.add_argument("-lt", metavar='leadtime', type=int,
     help="leadtime in hours")
 parser.add_argument("-fc", metavar='fcdate',
     help="forecasted date to check")
+parser.add_argument("-sd", metavar='startdate',
+    help="start date of time period to be evaluated")
+parser.add_argument("-ed", metavar='enddate',
+    help="end date of time period to be evaluated")
 parser.add_argument("-plat", metavar='platform',
     help="name of platform")
 parser.add_argument("-sat", metavar='satellite',
@@ -43,20 +53,37 @@ args = parser.parse_args()
 print ("Parsed arguments: ",args)
 
 # setup
-fc_date = datetime(int(args.fc[0:4]),int(args.fc[4:6]),
+if (args.lt is None and args.fc is not None):
+    fc_date = datetime(int(args.fc[0:4]),int(args.fc[4:6]),
                 int(args.fc[6:8]),int(args.fc[8:10]))
-if args.lt is None:
     timewin = 30
     init_date = fc_date
-else:
+elif (args.lt is not None and args.fc is not None):
+    fc_date = datetime(int(args.fc[0:4]),int(args.fc[4:6]),
+                int(args.fc[6:8]),int(args.fc[8:10]))
     init_date = fc_date - timedelta(hours=args.lt)
     timewin = 0
+
+if (args.ed is None and args.sd is not None):
+    sdate = datetime(int(args.sd[0:4]),int(args.sd[4:6]),
+                int(args.sd[6:8]),int(args.sd[8:10]))
+    edate = sdate
+elif (args.ed is not None and args.sd is not None):
+    sdate = datetime(int(args.sd[0:4]),int(args.sd[4:6]),
+                int(args.sd[6:8]),int(args.sd[8:10]))
+    edate = datetime(int(args.ed[0:4]),int(args.ed[4:6]),
+                int(args.ed[6:8]),int(args.ed[8:10]))
+if (args.fc is None and args.sd is None):
+    sys.exit("-> Error: A date or time period needs to be given!")
+if (args.plat is None and args.sat is None and args.buoy is None):
+    sys.exit("-> Error: A source of observations needs to be given!")
+if (args.m is None):
+    sys.exit("-> Error: A model to validate needs to be given!")
 
 if args.sat == 's3a':
     # get model collocated values
     sa_obj = sa(fc_date,timewin=timewin,region=args.m)
     results_dict = get_model2(sa_obj,args.m,init_date,fc_date)
-    print results_dict
     valid_dict=validate(results_dict)
     print valid_dict
 

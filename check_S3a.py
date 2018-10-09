@@ -4,6 +4,7 @@
 from datetime import datetime, timedelta
 from satmod import sentinel_altimeter as sa
 import argparse
+from argparse import RawTextHelpFormatter
 import os
 
 # parser
@@ -11,7 +12,8 @@ parser = argparse.ArgumentParser(
     description="""
 Check Sentinel-3a data. Example:
 ./check_S3a.py -r ARCMFC -sd 2018080112 -ed 2018080718 -m -a --show -save ./outpath
-    """
+    """,
+    formatter_class = RawTextHelpFormatter
     )
 parser.add_argument("-r", metavar='region',
     help="region to check")
@@ -43,7 +45,10 @@ else:
     timewin = 0
 
 # get data
-sa_obj = sa(sdate,edate=edate,timewin=timewin,region=args.r,mode="ARCMFC")
+if args.r == "ARCMFC":
+    sa_obj = sa(sdate,edate=edate,timewin=timewin,region=args.r,mode="ARCMFC")
+else:
+    sa_obj = sa(sdate,edate=edate,timewin=timewin,region=args.r)
 
 # plot
 if bool(args.m)==True:

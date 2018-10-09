@@ -488,6 +488,8 @@ class sentinel_altimeter():
         self.timewin = timewin
         self.gHsMax = np.array(fMAXS)
         self.region = region
+        print ("Sentinel object initialized including " 
+                + str(len(self.rHs)) + " footprints.")
 
     def get_localfilelst(self,sdate,edate,timewin,mode,region):
         if mode == 'ARCMFC':
