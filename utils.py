@@ -8,7 +8,7 @@ import sys
 from sklearn import gaussian_process
 from sklearn.gaussian_process.kernels import RBF, ConstantKernel, WhiteKernel
 
-def block_detection(time,ts,deltalim=None):
+def block_detection(time,deltalim=None):
     if deltalim is None:
         deltalim = 1
     # forward check
