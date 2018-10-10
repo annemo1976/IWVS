@@ -6,6 +6,34 @@ from datetime import datetime, timedelta
 from math import radians, cos, sin, asin, sqrt
 import sys
 
+def block_detection(time,ts,deltalim=None):
+    if deltalim is None:
+        deltalim = 1
+    # forward check
+    idx_a = []
+    for i in range(1,len(ts)):
+        delta_t = time[i]-time[i-1]
+        if delta_t>deltalim:
+            idx_a.append(i)
+    # backward check
+    idx_b = []
+    for i in range(0,len(ts)-1):
+        delta_t = time[i+1]-time[i]
+        if delta_t>deltalim:
+            idx_b.append(i)
+    blocklst = []
+    for i in range(len(idx_a)):
+        if i == 0:
+            tmp = [0,idx_b[i]]
+            blocklst.append(tmp)
+        if i < len(idx_a)-1:
+            tmp = [idx_a[i],idx_b[i+1]]
+            blocklst.append(tmp)
+        if i == len(idx_a)-1:
+            tmp = [idx_a[i],len(ts)-1]
+            blocklst.append(tmp)
+    return idx_a, idx_b, blocklst
+
 def identify_outliers(time,ts,ts_ref=None,hs_ll=None,hs_ul=None,dt=None):
     """
     time -> time series to check neighbour values
