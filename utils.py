@@ -5,6 +5,8 @@ import numpy as np
 from datetime import datetime, timedelta
 from math import radians, cos, sin, asin, sqrt
 import sys
+from sklearn import gaussian_process
+from sklearn.gaussian_process.kernels import RBF, ConstantKernel, WhiteKernel
 
 def block_detection(time,ts,deltalim=None):
     if deltalim is None:
@@ -33,6 +35,24 @@ def block_detection(time,ts,deltalim=None):
             tmp = [idx_a[i],len(ts)-1]
             blocklst.append(tmp)
     return idx_a, idx_b, blocklst
+
+def identify_outliers_GP(x,y,mag):
+    # mag -> magnitude in units std
+    # if len(y)<11 flag all
+    if len(y)<11:
+        print ("block too short, values flagged")
+    else:
+        kernel = ConstantKernel() + RBF(length_scale=1) + WhiteKernel(noise_level=1)
+        gp = gaussian_process.GaussianProcessRegressor(kernel=kernel)
+        gp.fit(x.reshape(-1,1), y.reshape(-1,1))
+        print gp.kernel_
+        x_pred = x.reshape(-1,1)
+        y_pred, sigma = gp.predict(x_pred, return_std=True)
+    idx = []
+    for i in range(len(y)):
+        if ((y[i]>(y_pred[i]+(m*sigma[i]))[0]) or (y[i]<(y_pred[i]-(m*sigma[i]))[0])):
+            idx_ol.append(i)
+    return idx
 
 def identify_outliers(time,ts,ts_ref=None,hs_ll=None,hs_ul=None,dt=None):
     """
