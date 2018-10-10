@@ -13,13 +13,13 @@ def block_detection(time,deltalim=None):
         deltalim = 1
     # forward check
     idx_a = []
-    for i in range(1,len(ts)):
+    for i in range(1,len(time)):
         delta_t = time[i]-time[i-1]
         if delta_t>deltalim:
             idx_a.append(i)
     # backward check
     idx_b = []
-    for i in range(0,len(ts)-1):
+    for i in range(0,len(time)-1):
         delta_t = time[i+1]-time[i]
         if delta_t>deltalim:
             idx_b.append(i)
@@ -32,15 +32,18 @@ def block_detection(time,deltalim=None):
             tmp = [idx_a[i],idx_b[i+1]]
             blocklst.append(tmp)
         if i == len(idx_a)-1:
-            tmp = [idx_a[i],len(ts)-1]
+            tmp = [idx_a[i],len(time)-1]
             blocklst.append(tmp)
     return idx_a, idx_b, blocklst
 
 def identify_outliers_GP(x,y,mag):
     # mag -> magnitude in units std
     # if len(y)<11 flag all
+    idx = []
     if len(y)<11:
-        print ("block too short, values flagged")
+        print ("block too short with length " + str(int(len(y))) + ", values flagged")
+        for i in range(len(y)):
+            idx.append(i)
     else:
         kernel = ConstantKernel() + RBF(length_scale=1) + WhiteKernel(noise_level=1)
         gp = gaussian_process.GaussianProcessRegressor(kernel=kernel)
@@ -48,10 +51,9 @@ def identify_outliers_GP(x,y,mag):
         print gp.kernel_
         x_pred = x.reshape(-1,1)
         y_pred, sigma = gp.predict(x_pred, return_std=True)
-    idx = []
-    for i in range(len(y)):
-        if ((y[i]>(y_pred[i]+(mag*sigma[i]))[0]) or (y[i]<(y_pred[i]-(mag*sigma[i]))[0])):
-            idx.append(i)
+        for i in range(len(y)):
+            if ((y[i]>(y_pred[i]+(mag*sigma[i]))[0]) or (y[i]<(y_pred[i]-(mag*sigma[i]))[0])):
+                idx.append(i)
     return idx
 
 def identify_outliers(time,ts,ts_ref=None,hs_ll=None,hs_ul=None,dt=None):
