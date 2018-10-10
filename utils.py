@@ -50,8 +50,8 @@ def identify_outliers_GP(x,y,mag):
         y_pred, sigma = gp.predict(x_pred, return_std=True)
     idx = []
     for i in range(len(y)):
-        if ((y[i]>(y_pred[i]+(m*sigma[i]))[0]) or (y[i]<(y_pred[i]-(m*sigma[i]))[0])):
-            idx_ol.append(i)
+        if ((y[i]>(y_pred[i]+(mag*sigma[i]))[0]) or (y[i]<(y_pred[i]-(mag*sigma[i]))[0])):
+            idx.append(i)
     return idx
 
 def identify_outliers(time,ts,ts_ref=None,hs_ll=None,hs_ul=None,dt=None):
