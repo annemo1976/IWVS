@@ -42,10 +42,16 @@ def identify_outliers_GP(x,y,mag):
     idx = []
     if len(y)<11:
         print ("block too short with length " + str(int(len(y))) + ", values flagged")
+        x_pred = []
+        y_pred = []
+        sigma = []
         for i in range(len(y)):
             idx.append(i)
+            x_pred.append(np.nan)
+            y_pred.append(np.nan)
+            sigma.append(np.nan)
     else:
-        kernel = ConstantKernel() + RBF(length_scale=1) + WhiteKernel(noise_level=1)
+        kernel = 1* RBF(length_scale=1) + WhiteKernel(noise_level=1)
         gp = gaussian_process.GaussianProcessRegressor(kernel=kernel)
         gp.fit(x.reshape(-1,1), y.reshape(-1,1))
         print gp.kernel_
@@ -54,7 +60,7 @@ def identify_outliers_GP(x,y,mag):
         for i in range(len(y)):
             if ((y[i]>(y_pred[i]+(mag*sigma[i]))[0]) or (y[i]<(y_pred[i]-(mag*sigma[i]))[0])):
                 idx.append(i)
-    return idx
+    return idx,x_pred,y_pred,sigma
 
 def identify_outliers(time,ts,ts_ref=None,hs_ll=None,hs_ul=None,dt=None):
     """
@@ -236,12 +242,14 @@ def runmean(vec,win,mode=None):
     if mode is None:
         mode='centered'
     out = np.zeros(len(vec))*np.nan
+    std = np.zeros(len(vec))*np.nan
     length = len(vec)-win+1
     if mode=='left':
         count = win-1
         start = win-1
         for i in range(length):
             out[count] = np.mean(vec[count-start:count+1])
+            std[count] = np.std(vec[count-start:count+1])
             count = count+1
     elif mode=='centered':
         count = win/2
@@ -251,13 +259,15 @@ def runmean(vec,win,mode=None):
                 sys.exit("windo length needs to be odd!")
             else:
                 out[count] = np.mean(vec[count-start:count+start+1])
+                std[count] = np.std(vec[count-start:count+start+1])
                 count = count+1
     elif mode=='right':
         count = 0
         for i in range(length):
             out[count] = np.mean(vec[i:i+win])
+            std[count] = np.std(vec[i:i+win])
             count = count+1
-    return out
+    return out, std
 
 def bootstr(a,reps):
     """

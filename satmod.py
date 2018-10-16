@@ -588,7 +588,7 @@ class sentinel_altimeter():
         fTIME=list(np.array(fTIME)[indices])
         fVAVHS=list(np.array(fVAVHS)[indices])
         # smooth Hs time series
-        fVAVHS_smooth = runmean(fVAVHS,5,'centered')
+        fVAVHS_smooth,fVAVHS_std = runmean(fVAVHS,5,'centered')
         return fLATS, fLONS, fTIME, fVAVHS, fMAXS, fVAVHS_smooth
 
     def quim(self,region=None):
