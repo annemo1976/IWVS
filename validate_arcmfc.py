@@ -65,8 +65,8 @@ filestr=('product_quality_stats_ARCTIC_ANALYSIS_FORECAST_WAV_002_006_'
         + str(monthrange(now.year, now.month)[1]) + '.nc')
 
 # cp original validation file to new file that can be changed
-#filestr_new = pathstr + filestr + ".test"
-#os.system("cp " + pathstr + filestr + " " + filestr_new)
+filestr_new = pathstr + filestr + ".test"
+os.system("cp " + pathstr + filestr + " " + filestr_new)
 
 nc = Dataset(pathstr + filestr , 'r')
 #time:units = "days since 2001-01-01 12:00:00 UTC" ;
